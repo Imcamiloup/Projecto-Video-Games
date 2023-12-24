@@ -21,13 +21,30 @@ const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 require('dotenv').config();
 const PORT = process.env.PORT;
-const URL = `https://api.rawg.io/api/games?key=${process.env.API_KEY}`;
-const http = require('http');
-const {getGameById} = require('./src/controllers/getGameById.js');
-const {getGenreById} = require('./src/controllers/getGenreById.js');
+
+conn.sync({ force: true })
+    .then(() => {
+      server.listen(PORT, () => {
+      console.log('%s listening at 3001'); 
+      });
+    })
+    .catch((err) => console.log(err));
 
 
-http.createServer(async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+    
+
+/*http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   const { url } = req;
 
@@ -44,17 +61,10 @@ http.createServer(async (req, res) => {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Ruta no encontrada' }));
   }
-}).listen(3002, 'localhost');
+}).listen(3002, 'localhost');*/
 
 
 // Sincronizando los modelos 
-conn.sync({ force: true })
-    .then(() => {
-      server.listen(PORT, () => {
-      console.log('%s listening at 3001'); 
-      });
-    })
-    .catch((err) => console.log(err));
 
 
 /*

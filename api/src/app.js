@@ -5,10 +5,15 @@ const routes = require('./routes/index.js');*/
 require('dotenv').config();
 const express = require('express');
 const { Videogame, Genre } = require('./db.js');
+const axios = require('axios');
+const URL = `https://api.rawg.io/api/games?key=${process.env.API_KEY}`;
+const {getGameById} = require('./controllers/getGameById.js');
 
 const server = express();
 
 server.name = 'API';
+
+
 
 // Middleware para analizar JSON y URL-encoded
 server.use(express.json());
@@ -16,27 +21,32 @@ server.use(express.urlencoded({ extended: true }));
 
 // Endpoint de prueba
 server.get('/', (req, res) => {
-  res.status(200).json({ message: 'API is running' });
+ // res.status(200).json({ message: 'API is running' });
+  res.send('API is running');
 });
 
 // Ruta para obtener todos los videojuegos
-server.get('/api/videogames', async (req, res) => {
+server.get('/videogames', async (req, res) => {
   try {
-    const videogames = await Videogame.findAll();
-    res.status(200).json(videogames);
+    const response = await axios.get(URL);
+    res.send(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error(error);
+    res.status(500).send({ error: 'Error al obtener datos de la API' });
   }
 });
 
-// Ruta para obtener todos los géneros
-server.get('/api/genres', async (req, res) => {
-  try {
-    const genres = await Genre.findAll();
-    res.status(200).json(genres);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+//  Ruta para obtener un videojuego por ID
+server.get('/videogames/:idVideogame', async (req, res) => {
+  // Obteniendo el ID de la URL
+  const { idVideogame } = req.params;
+  // Eliminando dos puntos del ID
+  const id = idVideogame.replace(':', '');
+  // Llamando al controlador
+  await getGameById(res, id);
+  //debugger;
+  //console.log(id);
+  //console.log(idVideogame);
 });
 
 // Agrega más rutas y controladores según sea necesario
