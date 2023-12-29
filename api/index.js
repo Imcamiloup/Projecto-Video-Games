@@ -20,6 +20,7 @@
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 require('dotenv').config();
+const axios = require('axios');
 const PORT = process.env.PORT;
 
 conn.sync({ force: true })
@@ -42,7 +43,7 @@ conn.sync({ force: true })
 
 
 
-    
+
 
 /*http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -67,11 +68,11 @@ conn.sync({ force: true })
 // Sincronizando los modelos 
 
 
-/*
-console.log(axios(`https://api.rawg.io/api/games?key=${process.env.API_KEY}`));
+
+/*console.log(axios(`https://api.rawg.io/api/games?key=${process.env.API_KEY}`));
 
 axios
-  .get(`https://api.rawg.io/api/gaes?key=${process.env.API_KEY}`)
+  .get(`https://api.rawg.io/api/games?key=${process.env.API_KEY}`)
   .then(
     (res) => {console.log(res.data);},  //valor de resolución, "success handler"
     (reason) => {console.log(reason.response.data);}  //valor de rechazo, "error handler"
@@ -79,5 +80,4 @@ axios
   .then(
     () => console.log('PROMESA EJECUTADA'),
     (reason) => {console.log(reason.response.data);}  //valor de resolución, "success handler"
-    )
-*/
+    )*/

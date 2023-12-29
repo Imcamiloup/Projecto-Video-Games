@@ -13,5 +13,13 @@ module.exports = (sequelize) => {
         unique: true,
         allowNull: false,
       },
-    });;
+      
+    },
+    {
+      tableName: 'Genre', 
+      timestamps: false,
+      freezeTableName: true, 
+    }
+    );
+    
   };

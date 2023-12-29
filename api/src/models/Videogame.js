@@ -3,37 +3,41 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports = (sequelize) => {
   sequelize.define('Videogame', {
-      ID: {
+      id: {
         type: DataTypes.UUID,
         defaultValue: () => uuidv4(),
         primaryKey: true,
       },
-      Nombre: {
+      nombre: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
       },
-      Descripcion: {
+      descripcion: {
         type: DataTypes.TEXT,
       },
-      Plataformas: {
-        type: DataTypes.STRING,
+      plataformas: {
+        type: DataTypes.JSON,
         allowNull: false,
       },
-      Imagen: {
+      imagen: {
         type: DataTypes.STRING,
       },
-      FechaLanzamiento: {
-        type: DataTypes.DATE,
+      fechaLanzamiento: {
+        type: DataTypes.DATEONLY,
       },
-      Rating: {
+      rating: {
         type: DataTypes.FLOAT,
       },
     },
     {
+      paranoid: true,
+      tableName: 'Videogame', 
       timestamps: false,
+      freezeTableName: false, 
     }
   );
 };
+
 
 
