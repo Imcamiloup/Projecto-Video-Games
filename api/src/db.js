@@ -1,63 +1,45 @@
-require('dotenv').config();
-const { Sequelize, DataTypes } = require('sequelize');
-const VideogameCreator = require('./models/Videogame');
-const GenreCreator = require('./models/Genre');
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
+const fs = require("fs");
+const path = require("path");
+
 const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
 
-// Creando la conexión a la base de datos
-const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/videogames`, {
-  logging: false,
-  native: false,
-});
+const sequelize = new Sequelize(
+  `postgres:${DB_USER}:${DB_PASSWORD}@${DB_HOST}/videogames`,
+  {
+    logging: false, // set to console.log to see the raw SQL queries
+    native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+  }
+);
 
-// Creando los modelos
-VideogameCreator(sequelize);
-GenreCreator(sequelize);
+const basename = path.basename(__filename);
+const modelDefiners = [];
 
-// Separando los modelos en variables distintas.
-const { Videogame, Genre} = sequelize.models;
-
-// Creo la relación muchos a muchos
-Genre.belongsToMany(Videogame, { through: 'videogame_genres', foreignKey: 'GenreID' });
-Videogame.belongsToMany(Genre, { through: 'videogame_genres', foreignKey: 'VideogameId' });
-
-// Sincroniza el modelo con la base de datos
-sequelize.sync({ force: false})
-  .then(() => {
-    console.log('Modelo sincronizado correctamente.');
-
-    // Registro de prueba
-    /*const newGame = {
-      nombre: 'Super Mario Bros',
-      descripcion: 'Juego de plataformas',
-      plataformas: 'NES',
-      imagen: 'https://www.mobygames.com/images/covers/l/10624-super-mario-bros-nes-front-cover.jpg',
-      fechaLanzamiento: new Date('1985-09-13'),
-      rating: 4.5,
-    };
-
-    Videogame.create(newGame)
-      .then((game) => {
-        console.log('Juego creado:', game.toJSON());
-
-        // Consulta de prueba
-        Videogame.findAll()
-          .then((games) => {
-            console.log('Juegos encontrados:', games);
-          })
-          .catch((error) => {
-            console.error('Error al realizar la consulta de prueba:', error);
-          });
-      })
-      .catch((err) => console.log('Error al crear el juego:', err));*/
-  })
-  .catch((err) => {
-    console.log('Error al sincronizar el modelo:');
+fs.readdirSync(path.join(__dirname, "/models"))
+  .filter(
+    (file) =>
+      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js"
+  )
+  .forEach((file) => {
+    modelDefiners.push(require(path.join(__dirname, "/models", file)));
   });
 
+modelDefiners.forEach((model) => model(sequelize));
+// Capitalizamos los nombres de los modelos ie: product => Product
+let entries = Object.entries(sequelize.models);
+let capsEntries = entries.map((entry) => [
+  entry[0][0].toUpperCase() + entry[0].slice(1),
+  entry[1],
+]);
+sequelize.models = Object.fromEntries(capsEntries);
+
+const { Videogame, Genre} = sequelize.models;
+
+Genre.belongsToMany(Videogame, { through: 'videogame_genres'  });
+Videogame.belongsToMany(Genre, { through: 'videogame_genres' });
 
 module.exports = {
   ...sequelize.models,
-  conn: sequelize,
-  Videogame, Genre,
+  conn: sequelize
 };
