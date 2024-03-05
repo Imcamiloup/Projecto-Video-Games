@@ -37,6 +37,18 @@ const getAllVideoGamesController = async () => {
       }
 }
 
+// get videogame by id
+const getVideoGameByIdController = async (id) => {
+    try{
+        if (!id) throw new Error("Missing data");
+        const game = await Videogame.findByPk(id);
+        return game;
+    }catch(error){
+        throw new Error("Error getting video game by id: " + error.message);
+    }
+
+}
+
 // Create a new videogame
 const createVideoGameController = async (name, description, platforms, image, released, rating) => {
     try{
@@ -56,8 +68,21 @@ const createVideoGameController = async (name, description, platforms, image, re
 
 }
 
+// Change the rating of a videogame
+const changeRatingVideoGameController = async (rating, game) => {
+    try{
+        game.rating = rating;
+        await game.save();
+        return game;
+    }catch(error){
+        throw new Error("Error changing rating video game: " + error.message);
+    }
+}
+
 
 module.exports = {
     getAllVideoGamesController,
-    createVideoGameController
+    getVideoGameByIdController,
+    createVideoGameController,
+    changeRatingVideoGameController,
 }
