@@ -1,5 +1,10 @@
 
-const { getAllVideoGamesController, getVideoGameByIdController, createVideoGameController, changeRatingVideoGameController} = require('../controllers/videoGamesController');
+const { getAllVideoGamesController,
+     getVideoGameByIdController,
+        getVideoGameByNameController,
+     createVideoGameController, 
+     changeRatingVideoGameController
+    } = require('../controllers/videoGamesController');
 
 
 // Responde con todos los videojuegos
@@ -16,15 +21,29 @@ const getAllVideoGamesHandler = async  (req, res) => {
 // Responde con el videojuego que tiene el id que recibe
 const getVideoGameByIdHandler = async (req, res) => {
     const { id } = req.params;
-
     try{
         if (!id) throw new Error("Missing data");
         const response = await getVideoGameByIdController(id);
+        console.log('Response:',response);
         if (!response) throw new Error("Game not found");
         res.status(200).send(response);
     }
     catch(error){
         console.log(error);
+        res.status(404).send("Not find video game:" + error.message);
+    }
+}
+
+// Responde con el videojuego que tiene el nombre que recibe
+const getVideoGameByNameHandler = async (req, res) => {
+    const { name } = req.query;
+    try{
+        if (!name) throw new Error("Missing data");
+        const response = await getVideoGameByNameController(name);
+        if (!response) throw new Error("Game not found");
+        res.status(200).send(response);
+    }
+    catch(error){
         res.status(404).send("Not find video game:" + error.message);
     }
 }
@@ -72,9 +91,11 @@ const deleteVideoGameHandler = async (req, res) => {
     }
 }
 
+
 module.exports = {
     getAllVideoGamesHandler,
     getVideoGameByIdHandler,
+    getVideoGameByNameHandler,
     createVideoGameHandler,
     changeRatingVideoGameHandler,
     deleteVideoGameHandler

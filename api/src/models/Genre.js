@@ -3,12 +3,12 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports = (sequelize) => {
     sequelize.define('Genre', {
-      ID: {
+      id: {
         type: DataTypes.UUID,
         defaultValue: () => uuidv4(),
         primaryKey: true,
       },
-      Nombre: {
+      name: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
@@ -16,9 +16,8 @@ module.exports = (sequelize) => {
       
     },
     {
-      tableName: 'Genre', 
+      tableName: 'Genres', 
       timestamps: false,
-      freezeTableName: true, 
     }
     );
     
